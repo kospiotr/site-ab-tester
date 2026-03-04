@@ -3,6 +3,7 @@ let currentIndex = 0;
 let ws;
 let results = [];
 let sortMode = 'testing'; // Default to 'testing' mode
+let managerMode = 'iframe'; // Default to iframe mode
 
 async function loadEntries() {
   const res = await fetch('/api/entries');
@@ -95,19 +96,18 @@ function renderEntries() {
       entryRow.style.color = 'black';
     }
 
-    const entryUl = document.createElement('ul');
-    entryUl.style.margin = '0 16px 0 0';
-    entryUl.style.padding = '0';
-    entryUl.style.listStyle = 'none';
-    const liA = document.createElement('li');
-    liA.textContent = `A: ${entry[0]}`;
-    const liB = document.createElement('li');
-    liB.textContent = `B: ${entry[1]}`;
-    entryUl.appendChild(liA);
-    entryUl.appendChild(liB);
+    const entryUl = document.createElement('div');
+    entryUl.style.flex = '1';
+    for(e of entry){
+        const liA = document.createElement('div');
+        liA.textContent = `- ${e}`;
+        entryUl.appendChild(liA);
+    }
     entryRow.appendChild(entryUl);
 
     if (idx === currentIndex) {
+      const div = document.createElement('div');
+
       const btnOk = document.createElement('button');
       btnOk.textContent = 'OK';
       btnOk.style.marginRight = '8px';
@@ -115,16 +115,45 @@ function renderEntries() {
       const btnFail = document.createElement('button');
       btnFail.textContent = 'Fail';
       btnFail.onclick = (e) => { e.stopPropagation(); sendResult('Fail'); };
-      entryRow.appendChild(btnOk);
-      entryRow.appendChild(btnFail);
+      div.appendChild(btnOk);
+      div.appendChild(btnFail);
+      entryRow.appendChild(div);
     }
     list.appendChild(entryRow);
+  });
+}
+function setManagerMode(mode) {
+  managerMode = mode;
+  updateManagerModeButtons();
+}
+function updateManagerModeButtons() {
+  const btnIframe = document.getElementById('btn-iframe');
+  const btnTab = document.getElementById('btn-tab');
+  if (managerMode === 'iframe') {
+    btnIframe.style.background = '#333';
+    btnIframe.style.color = '#fff';
+    btnTab.style.background = '#eee';
+    btnTab.style.color = '#333';
+  } else {
+    btnTab.style.background = '#333';
+    btnTab.style.color = '#fff';
+    btnIframe.style.background = '#eee';
+    btnIframe.style.color = '#333';
+  }
+}
+function openTabsForEntry(entry) {
+  entry.forEach((url, idx) => {
+    window.open(url, 'tab_' + idx);
   });
 }
 function navigate(idx) {
   currentIndex = idx;
   ws.send(JSON.stringify({type: 'navigate', index: idx}));
   renderEntries();
+  if (managerMode === 'tab') {
+    const entry = entries[idx];
+    openTabsForEntry(entry);
+  }
 }
 function sendResult(result) {
   ws.send(JSON.stringify({type: 'result', index: currentIndex, result}));
@@ -145,6 +174,7 @@ window.onload = () => {
   loadEntries();
   loadResults();
   updateSortButtons();
+  updateManagerModeButtons();
   ws = new WebSocket(`ws://${location.host}/ws`);
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -159,3 +189,4 @@ window.onload = () => {
   };
 };
 
+window.setManagerMode = setManagerMode;
