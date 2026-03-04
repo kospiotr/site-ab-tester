@@ -1,7 +1,6 @@
 function getSide() {
   const params = new URLSearchParams(window.location.search);
-  const side = params.get('side');
-  return side === 'B' ? 1 : 0;
+  return params.get('side');
 }
 let entries = [];
 let currentIndex = 0;

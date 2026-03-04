@@ -92,9 +92,13 @@ app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 @app.get("/")
 def root():
+    return RedirectResponse(url="/manager.html")
+
+@app.get("/manager.html")
+def side():
     return HTMLResponse(open("assets/manager.html").read())
 
-@app.get("/site.html")
-def root():
-    return HTMLResponse(open("assets/site.html").read())
+@app.get("/side.html")
+def side():
+    return HTMLResponse(open("assets/side.html").read())
 

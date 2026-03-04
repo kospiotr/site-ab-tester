@@ -39,8 +39,6 @@ uvicorn main:app --reload
 
 3. Open three browser tabs:
 - Manager: [http://localhost:8000/](http://localhost:8000/)
-- Site A: [http://localhost:8000/siteA](http://localhost:8000/siteA)
-- Site B: [http://localhost:8000/siteB](http://localhost:8000/siteB)
 
 4. Use the manager to select entries and record results. Site A and Site B will update in real-time.
 
