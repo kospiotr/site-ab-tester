@@ -16,7 +16,7 @@ This project is a web-based A/B tester for QA, allowing you to compare multiple 
 2. Install dependencies:
 
 ```bash
-pip install fastapi uvicorn
+pip install -r requirements.txt
 ```
 
 ## Usage
