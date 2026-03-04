@@ -152,8 +152,9 @@ window.onload = () => {
       currentIndex = data.index;
       renderEntries();
     } else if (data.type === 'result') {
-      loadResults();
-      nextEntry();
+      loadResults().then(() => {
+        nextEntry();
+      });
     }
   };
 };
